@@ -3,15 +3,15 @@
   <div class="container" :class="{'sign-up-mode': signUpMode}">
     <div class="forms-container">
       <div class="signin-signup">
-        <form action="" class="sign-in-form">
+        <form action="" class="sign-in-form" @submit.prevent="login">
           <h2 class="title">Logowanie</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
-            <input type="text" placeholder="Login">
+            <input type="text" placeholder="Login" v-model="loginData.email">
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input type="password" placeholder="Hasło">
+            <input type="password" placeholder="Hasło" v-model="loginData.password">
           </div>
           <input type="submit" value="Zaloguj" class="btn solid">
 
@@ -31,19 +31,23 @@
             </a>
           </div>
         </form>
-        <form action="" class="sign-up-form">
+        <form action="" class="sign-up-form" @submit.prevent="register">
           <h2 class="title">Rejestracja</h2>
           <div class="input-field">
             <i class="fas fa-user"></i>
-            <input type="text" placeholder="Login">
+            <input type="text" placeholder="Imię" v-model="registerData.firstname">
+          </div>
+          <div class="input-field">
+            <i class="fas fa-user"></i>
+            <input type="text" placeholder="Nazwisko" v-model="registerData.lastname">
           </div>
           <div class="input-field">
             <i class="fas fa-envelope"></i>
-            <input type="email" placeholder="Email">
+            <input type="email" placeholder="Email" v-model="registerData.email">
           </div>
           <div class="input-field">
             <i class="fas fa-lock"></i>
-            <input type="password" placeholder="Hasło">
+            <input type="password" placeholder="Hasło" v-model="registerData.password">
           </div>
           <input type="submit" value="Stwórz konto" class="btn solid">
 
@@ -90,14 +94,36 @@
 </template>
 <script>
 
+import axios from "axios";
+
 export default {
   name: 'Login',
   data() {
     return {
+      loginData: {
+        email: '',
+        password: ''
+      },
+      registerData: {
+        firstname: '',
+        lastname: '',
+        email: '',
+        password: ''
+      },
       signUpMode: false
     };
   },
   methods: {
+    async login() {
+      console.log(this.loginData);
+      const response = await axios.post('http://localhost:8080/api/v1/auth/authenticate', this.loginData);
+      localStorage.setItem('token', response.data.token);
+    },
+    async register() {
+      console.log(this.registerData);
+      await axios.post('http://localhost:8080/api/v1/auth/register', this.registerData);
+      this.signUpMode = false;
+    },
     switchToSignUp() {
       this.signUpMode = true;
     },

@@ -110,6 +110,20 @@ import axios from 'axios';
 
 export default {
   name: 'Home',
+  mounted() {
+    let token=localStorage.getItem("token");
+    console.log(token);
+    axios
+        .get("http://localhost:8080/api/v1/demo-controller", {
+          headers: {
+            "Authorization" : `Bearer ${token}`,
+            token: token
+          }
+        })
+        .then(res => {
+          console.log(res);
+        });
+  },
   data() {
     return {
       processCount: null,
